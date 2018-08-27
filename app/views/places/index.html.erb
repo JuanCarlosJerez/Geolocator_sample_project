@@ -11,3 +11,8 @@
  
 <hr>
 <%= render 'form', place: @place %>
+
+<h1>Places</h1>
+ 
+<%= react_component 'Map',
+    props: { coordinates: @coordinates, centerOnUser: true} %>
