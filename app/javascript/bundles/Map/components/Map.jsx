@@ -4,14 +4,38 @@ import mapboxgl from 'mapbox-gl';
 export default class Map extends React.Component {
   componentDidMount() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiYW5keXdlaXNzMTk4MiIsImEiOiJIeHpkYVBrIn0.3N03oecxx5TaQz7YLg2HqA'
-    this.createMap();
+    let { coordinates } = this.props;
+    const mapOptions = {
+      container: this.mapContainer,
+      style: `mapbox://styles/mapbox/streets-v9`,
+      zoom: 12,
+      center: coordinates
+    };
+    const geolocationOptions = {
+      enableHighAccuracy: true,
+      maximumAge        : 30000,
+      timeout           : 27000
+    };
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        // success callback
+        (position) => {
+          document.getElementById("long")
+                  .innerHTML = position.coords.longitude;
+          document.getElementById("lat")
+                  .innerHTML = position.coords.latitude;
+        },
+        // failure callback
+        () => { console.log("Couldn't get location") },
+        // options
+        geolocationOptions
+      );
+    }
+    this.createMap(mapOptions);
   }
  
-  createMap = () => {
-    this.map = new mapboxgl.Map({
-      container: this.mapContainer,
-      style: `mapbox://styles/mapbox/streets-v9`
-    });
+  createMap = mapOptions => {
+    this.map = new mapboxgl.Map(mapOptions);
     const map = this.map;
     map.on('load', (event) => {
       map.addSource(
